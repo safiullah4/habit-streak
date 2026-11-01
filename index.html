@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120a21">
+<title>Habit Streak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120a21;--card:#211340;--line:#35255c;--tx:#f2ecff;--mut:#a597c8;--chip:#2a1a4d;--ok:#34d399;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(900px 420px at 50% -80px,#3a1b73 0,transparent 70%),var(--bg);color:var(--tx);font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4;min-height:100vh}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px 24px;background:linear-gradient(135deg,#ffd54a,#ff9a5a 40%,#ff5f9e 75%,#b45cff);color:#2a0f3d;border-radius:0 0 28px 28px;box-shadow:0 10px 30px rgba(255,95,158,.3)}
+.hd h1{margin:0;font-size:1.4rem;white-space:nowrap;font-weight:800;letter-spacing:-.02em}
+.hd p{margin:2px 0 0;font-size:.9rem;font-weight:700;opacity:.8}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:10px 16px;background:var(--acc,var(--ok));color:#10261c;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.add{background:#2a0f3d;color:#fff;white-space:nowrap}
+.btn:focus-visible,.c:focus-visible,.ed:focus-visible,.i:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:16px 14px max(56px,calc(env(safe-area-inset-bottom,0px) + 32px))}
+.sum{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.sum b{font-size:1.5rem;font-weight:800}
+.sum span{color:var(--mut);font-size:.88rem}
+.bar{flex:1;height:10px;border-radius:9px;background:var(--chip);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#34d399,#60a5fa);border-radius:9px;transition:width .4s}
+.hint{color:var(--mut);font-size:.8rem;text-align:center;margin:12px 0 14px}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+.card{--hc:#34d399;background:var(--card);border-radius:20px;padding:14px 0 12px;border:1px solid var(--line);min-width:0}
+.top{display:flex;align-items:center;gap:12px;padding:0 14px;margin-bottom:12px}
+.ico{font-size:1.7rem;width:48px;height:48px;border-radius:15px;background:color-mix(in srgb,var(--hc) 20%,var(--card));border:1px solid color-mix(in srgb,var(--hc) 45%,transparent);display:grid;place-items:center;flex:none}
+.nm{flex:1;min-width:0}
+.nm h3{margin:0;font-size:1.05rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st{display:inline-block;margin-top:3px;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:20px;background:color-mix(in srgb,var(--hc) 18%,transparent);color:var(--hc)}
+.ed{border:0;background:var(--chip);color:var(--mut);width:36px;height:36px;border-radius:50%;font-size:1rem;cursor:pointer;flex:none}
+.strip{display:flex;gap:6px;overflow-x:auto;padding:2px 14px 6px;touch-action:pan-x;scrollbar-width:none;overscroll-behavior-x:contain}
+.strip::-webkit-scrollbar{display:none}
+.c{font:inherit;border:0;background:none;padding:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex:none;width:44px}
+.c small{font-size:.7rem;font-weight:600}
+.c small.mo{color:var(--hc);font-weight:800}
+.c span{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:.85rem;font-weight:700;transition:background .2s,border-color .2s}
+.c.td small{color:var(--tx);font-weight:800}
+.c.td span{border-color:var(--hc);color:var(--tx);box-shadow:0 0 0 3px color-mix(in srgb,var(--hc) 25%,transparent)}
+.c.on span{background:var(--hc);border-color:var(--hc);color:#1a0d2e;font-size:1.15rem}
+.c.jp span{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.22)}100%{transform:scale(1)}}
+.chips{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:10px 14px 0}
+.chips div{background:linear-gradient(to top,color-mix(in srgb,var(--hc) 35%,var(--chip)) var(--p,0%),var(--chip) var(--p,0%));border-radius:12px;padding:7px 1px;text-align:center;font-size:.64rem;color:var(--mut);font-weight:600}
+.chips b{display:block;font-size:1.1rem;font-weight:800;color:var(--tx)}
+.chips .full{background:var(--hc);color:#1a0d2e}
+.chips .full b{color:#1a0d2e}
+.chips .full b::after{content:" ✓"}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);padding:56px 10px}
+.empty big{display:block;font-size:2.8rem;margin-bottom:6px}
+.empty h2{margin:0 0 8px;color:var(--tx);font-size:1.4rem;font-weight:800}
+.empty p{max-width:340px;margin:0 auto 18px}
+.plus{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:150px;width:100%;border:2px dashed var(--line);background:transparent;color:var(--mut);border-radius:20px;font:inherit;font-weight:700;cursor:pointer}
+.plus i{font-style:normal;font-size:2.8rem;line-height:1;color:#c084fc}
+.empty .plus{max-width:340px;margin:0 auto}
+.plus:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.ov{position:fixed;inset:0;background:rgba(8,3,18,.7);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov[hidden]{display:none}
+.box{--acc:#34d399;position:relative;width:min(92vw,400px);max-height:88vh;overflow-y:auto;overflow-x:hidden;background:color-mix(in srgb,var(--acc) 16%,#221441);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);border-top:6px solid var(--acc);border-radius:22px;padding:22px 20px;text-align:center;animation:rise .25s}
+@keyframes rise{from{transform:translateY(24px) scale(.96);opacity:0}}
+.box h2{margin:6px 0 8px;font-size:1.35rem;font-weight:800}
+.box p{margin:4px 0;color:var(--tx)}
+.em{font-size:3.4rem;line-height:1.1;animation:bob 1s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-6px)}}
+.box>.btn{margin-top:14px;min-width:130px}
+.g{--acc:#34d399}.y{--acc:#fbbf24}.o{--acc:#fb923c}.f{--acc:#ff5a2a}
+.f .em{font-size:5rem;animation:fl .5s ease-in-out infinite alternate}
+@keyframes fl{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.2) rotate(5deg)}}
+.fx i{position:absolute;bottom:-30px;font-style:normal;font-size:1.6rem;animation:up 2.4s ease-in infinite;pointer-events:none}
+@keyframes up{to{transform:translateY(-480px);opacity:0}}
+.rows{text-align:left;margin-top:10px}
+.rows div{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rows span{color:var(--mut)}
+#nm,#pre,#pw2{width:100%;font:inherit;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);margin:8px 0 4px}
+.lb{text-align:left;color:var(--mut);font-size:.75rem;font-weight:700;margin:10px 0 5px}
+.cl{display:flex;gap:9px;flex-wrap:wrap}
+.cl button{width:32px;height:32px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.cl button.on{border-color:#fff}
+.pk{max-height:210px;overflow-y:auto;text-align:left;padding-right:2px}
+.ic{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.i{font-size:1.4rem;border:2px solid transparent;background:var(--chip);border-radius:12px;padding:6px 0;cursor:pointer}
+.i.on{border-color:var(--ok);background:#35255c}
+.act{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.ghost{background:var(--chip);color:var(--tx)}
+.del{background:#ef4444;color:#fff}
+.hb{display:flex;gap:8px}
+.hb .btn{padding:9px 13px}
+.du{margin-left:6px;font:inherit;font-size:.74rem;font-weight:700;border:0;border-radius:20px;padding:2px 9px;background:var(--chip);color:var(--tx);cursor:pointer}
+.ps{color:var(--mut);font-size:.74rem;margin-top:3px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.seg button{font:inherit;font-weight:700;border:2px solid var(--line);background:var(--chip);color:var(--tx);border-radius:12px;padding:10px;cursor:pointer}
+.seg button.on{border-color:var(--ok);background:#35255c}
+.c.dd span{background-image:linear-gradient(90deg,transparent calc(50% - 1px),var(--line) calc(50% - 1px),var(--line) calc(50% + 1px),transparent calc(50% + 1px))}
+.c.hl span{background:linear-gradient(90deg,var(--hc) 50%,transparent 50%)}
+.c.hr span{background:linear-gradient(270deg,var(--hc) 50%,transparent 50%)}
+.c.f2 span{transform:scale(1.12);box-shadow:0 0 14px color-mix(in srgb,var(--hc) 55%,transparent)}
+.code{font-size:2rem;font-weight:800;letter-spacing:.2em;margin:10px 0;padding:10px;border-radius:14px;background:var(--bg);border:1px dashed var(--line)}
+.msg{color:var(--mut);font-size:.82rem;margin:8px 0}
+.lnk{font:inherit;font-size:.8rem;font-weight:700;background:none;border:0;color:#c084fc;cursor:pointer;text-decoration:underline}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#35255c;color:#fff;padding:10px 16px;border-radius:12px;font-size:.85rem;z-index:30;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hd"><div><h1>Habit Streak</h1><p>By Safiullah</p></div><div class="hb"><button class="btn add" id="join">Join</button><button class="btn add" id="add">+ New</button></div></header>
+<div class="wrap">
+<section class="sum" id="sum"></section>
+<p class="hint">Tap a circle to check a day. Swipe a row for earlier days. Hold a card for details. <button class="lnk" id="acc">Sign in</button></p>
+<main id="list"></main>
+</div>
+<div class="ov" id="modal" hidden><div class="box" id="box"></div></div>
+<div id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+const MAX=10,KEY="hs2",DEF="#34d399";
+/* ONLINE SETUP: after creating your Firebase project, replace the word null below with your config object, e.g. {apiKey:"...",authDomain:"...",projectId:"...",appId:"..."} */
+const FB=null;
+const DEMO=!FB;
+const G={"Health":"💧 🥗 🍎 🥦 🥑 💊 😴 🦷 🧴 🚭 🚫 🍬 ☕ 🥤 🩺 🍵 🥛 🍳","Fitness":"🏃 🚶 🏋️ 🧘 🚴 🏊 ⚽ 🏀 🤸 🥊 🧗 🎾 🏓 🏸","Mind":"📖 📚 ✍️ 📝 🧠 🎓 🌍 🎧 💡 🧩 🔤 🗒️","Work":"💻 🎯 📅 📧 📞 🗂️ ⏰ 📈 🛠️ ✅ 🏆 🚀","Faith and calm":"🤲 🕌 📿 🌙 ⭐ 🌅 🌿 🌸 🙏 🕊️ 🕯️ 🌳","Home":"🧹 🧺 🛏️ 🪴 🚿 🧼 🛒 🐕 🐈 🚗 🔧 🗑️","Money and social":"💰 🏦 🪙 💳 👪 🤝 📱 🎁 ❤️ 😊 💌 🎉","Fun":"🎨 🎸 🎹 📷 🎮 🎬 ♟️ ✈️ 🏕️ 🎤 🎻 🧵"};
+const COLORS=["#34d399","#60a5fa","#f472b6","#fbbf24","#fb923c","#a78bfa","#2dd4bf","#f87171"];
+const DAY=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const M={
+1:{t:"g",e:"🌱",h:"Great start!",p:"Day one is done. Keep going and don’t quit. Build a huge streak!"},
+7:{t:"y",e:"⭐",h:"7 days in a row!",p:"You’re doing great. Keep it up!"},
+15:{t:"o",e:"🏆",h:"15 days strong!",p:"Half a month without a break. Your consistency is paying off!"},
+30:{t:"f",e:"🔥",h:"30 days! You’re on fire!",p:"A full 30 days. This is a real habit now. Congratulations, champion!"}};
+let S={habits:[]},lp=false,timer,jk="",ED={},shownAt=0;
+try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.habits))S=x}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({...S,habits:S.habits.filter(h=>!h.duo||DEMO)}))}catch(e){}};
+const $=s=>document.querySelector(s);
+const key=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const today=()=>{const d=new Date();d.setHours(12,0,0,0);return d};
+const parse=k=>new Date(k+"T12:00:00");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=k=>parse(k).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+const cnt=(h,a,b)=>{let c=0;for(let d=new Date(a);d<=b;d=addD(d,1))if(h.days[key(d)])c++;return c};
+const fd=h=>{if(!h.duo)return h.days;const o={};for(const k in h.days)if(h.pdays&&h.pdays[k])o[k]=1;return o};
+function streak(h){const D=fd(h);let d=today();if(!D[key(d)])d=addD(d,-1);let c=0;while(D[key(d)]){c++;d=addD(d,-1)}return c}
+function best(h){let b=0,c=0,p=null;for(const k of Object.keys(fd(h)).sort()){const d=parse(k);c=p&&Math.round((d-p)/864e5)===1?c+1:1;if(c>b)b=c;p=d}return b}
+function startKey(h){const ks=Object.keys(h.days).sort();return ks.length&&ks[0]<h.created?ks[0]:h.created}
+
+const win=(h,N)=>{const f=key(addD(today(),-(N-1)));return Object.keys(fd(h)).filter(k=>k>=f).length};
+function render(){
+const prev={};document.querySelectorAll(".strip").forEach(s=>prev[s.dataset.id]=s.scrollLeft);
+const t=today(),tk=key(t),ym=tk.slice(0,7),yr=tk.slice(0,4),ws=addD(t,-((t.getDay()+1)%7)),from=addD(t,-199);
+const n=S.habits.length,done=S.habits.filter(h=>fd(h)[tk]).length;
+
+$("#add").disabled=n>=MAX;
+$("#acc").textContent=!DEMO&&U?"Account":"Sign in";
+$("#sum").innerHTML=n?`<div><b>${done}/${n}</b><br><span>done today</span></div><div class="bar"><i style="width:${Math.round(done/n*100)}%"></i></div>`:`<span>No habits yet. Add up to ${MAX}.</span>`;
+$("#list").innerHTML=n?S.habits.map(h=>{
+const st=parse(startKey(h)),a=st<from?st:from;let cells="";
+for(let d=new Date(a);d<=t;d=addD(d,1)){const k=key(d),me=h.days[k],pt=h.duo&&h.pdays&&h.pdays[k],on=h.duo?me&&pt:me,first=d.getDate()===1;
+cells+=`<button class="c${on?" on":""}${h.duo&&!on?(me?" hl":pt?" hr":" dd"):""}${h.duo&&on?" f2":""}${k===tk?" td":""}${on&&jk===h.id+k?" jp":""}" data-id="${h.id}" data-d="${k}"${h.duo&&!DEMO&&k!==tk?" disabled":""} aria-label="${k}"><small class="${first?"mo":""}">${first?MON[d.getMonth()]:DAY[d.getDay()]}</small><span>${on?"✓":d.getDate()}</span></button>`}
+const ks=Object.keys(h.days);
+return `<section class="card" data-h="${h.id}" style="--hc:${h.color||DEF}"><div class="top"><div class="ico">${h.icon}</div><div class="nm"><h3>${esc(h.name)}</h3><span class="st">🔥 ${streak(h)} day streak</span>${h.duo?`<button class="du" data-code="${h.id}">👥 ${h.code}</button><div class="ps">You ${h.days[tk]?"✓":"…"} · Partner ${h.pdays&&h.pdays[tk]?"✓":"waiting"}</div>`:""}</div><button class="ed" data-edit="${h.id}" aria-label="Edit habit">✎</button></div><div class="strip" data-id="${h.id}">${cells}</div><div class="chips">${[[7,"1 week"],[30,"1 month"],[90,"3 months"],[180,"6 months"],[365,"1 year"]].map(([d,l])=>{const c=win(h,d);return `<div class="${c>=d?"full":""}" style="--p:${Math.min(100,Math.round(c/d*100))}%"><b>${c}</b>${l}</div>`}).join("")}</div></section>`}).join("")+(n<MAX?`<button class="plus" data-new aria-label="Add habit"><i>+</i>Add habit</button>`:"")
+:`<div class="empty"><big>🌱</big><h2>Start your first streak</h2><p>Pick a habit, choose an icon and check it off every day. Already doing it for a while? Enter how many days when you create it.</p><button class="plus" data-new aria-label="Add habit"><i>+</i>Add habit</button></div>`;
+document.querySelectorAll(".strip").forEach(s=>{s.scrollLeft=s.dataset.id in prev?prev[s.dataset.id]:s.scrollWidth});
+jk="";
+}
+
+function show(html,cls){const b=$("#box");b.className="box "+(cls||"");b.innerHTML=html;b.scrollTop=0;$("#modal").hidden=false;shownAt=Date.now()}
+function closeM(){$("#modal").hidden=true}
+function pop(m,h,s){
+let fx="";
+if(m.t==="f")for(let i=0;i<14;i++)fx+=`<i style="left:${Math.random()*92}%;animation-delay:${(Math.random()*2.4).toFixed(2)}s">🔥</i>`;
+show(`<div class="fx">${fx}</div><div class="em">${m.e}</div><h2>${m.h}</h2><p><b>${esc(h.name)}</b>: ${s}-day streak</p><p>${m.p}</p><button class="btn" data-x>Keep going</button>`,m.t);
+}
+function info(h){
+const sk=startKey(h),total=Object.keys(fd(h)).length,span=Math.round((today()-parse(sk))/864e5)+1;
+show(`<div class="em">${h.icon}</div><h2>${esc(h.name)}</h2><div class="rows"><div><span>Total days done</span><b>${total}</b></div><div><span>Started</span><b>${fmt(sk)}</b></div><div><span>Current streak</span><b>${streak(h)} days</b></div><div><span>Best streak</span><b>${best(h)} days</b></div><div><span>Completion rate</span><b>${Math.min(100,Math.round(total/span*100))}%</b></div></div><button class="btn" data-x>Close</button>`);
+}
+function edit(id){
+const h=id?S.habits.find(x=>x.id===id):{name:"",icon:"🎯",color:DEF};
+if(!h)return;ED={id,icon:h.icon,color:h.color||DEF,duo:false};
+show(`<h2>${id?"Edit habit":"New habit"}</h2><input id="nm" maxlength="30" placeholder="e.g. Read 20 pages" value="${esc(h.name)}">${id?"":'<div class="seg"><button class="on" data-mode="s">Single</button><button data-mode="d">Duo 👥</button></div><div id="pw"><div class="lb">Already on a streak? Days done in a row before today</div><input id="pre" type="number" inputmode="numeric" min="0" max="365" value="0"></div>'}<div class="lb">Color</div><div class="cl">${COLORS.map(c=>`<button style="background:${c}" class="${c===ED.color?"on":""}" data-cl="${c}" aria-label="${c}"></button>`).join("")}</div><div class="lb">Icon</div><div class="pk">${Object.entries(G).map(([g,l])=>`<div class="lb">${g}</div><div class="ic">${l.split(" ").map(i=>`<button class="i${i===h.icon?" on":""}" data-ic="${i}">${i}</button>`).join("")}</div>`).join("")}</div><div class="act"><button class="btn" data-sv>Save</button>${id?'<button class="btn del" data-del>Delete</button>':""}<button class="btn ghost" data-x>Cancel</button></div>`);
+}
+function tog(id,k,w){
+const h=S.habits.find(x=>x.id===id);if(!h)return;
+if(h.duo&&!DEMO){if(k===key(today()))cloudTick(h,k);return}
+const o=w==="p"?(h.pdays=h.pdays||{}):h.days;
+if(o[k])delete o[k];
+else{o[k]=1;jk=id+k;
+if(k===key(today())){const s=streak(h);if(M[s]&&fd(h)[k]){save();render();pop(M[s],h,s);return}}}
+save();render();
+}
+
+const genCode=()=>{const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s};
+function showCode(id){const h=S.habits.find(x=>x.id===id)||{code:String(id).replace(/^r_/,"")};show(`<div class="em">👥</div><h2>Duo room created</h2><p>Share this code with your partner. They tap <b>Join</b> and enter it.</p><div class="code">${h.code}</div><button class="btn" data-copy="${h.code}">Copy code</button><p class="msg">${DEMO?"Demo mode: your partner is simulated. Tap the right half of a circle to act as your partner.":"The room is open for one more person."}</p><button class="btn ghost" data-x>Done</button>`,"g")}
+function joinD(){show(`<h2>Join a Duo room</h2><p>Enter the code your partner shared.</p><input id="nm" maxlength="6" placeholder="K7M2QX" style="text-transform:uppercase;text-align:center;letter-spacing:.2em"><p class="msg" id="jm">${DEMO?"Online joining switches on after the Firebase setup. This screen shows how it will look.":""}</p><div class="act"><button class="btn" data-join>Join</button><button class="btn ghost" data-x>Cancel</button></div>`)}
+function acct(m){
+if(DEMO){show(`<h2>Account</h2><p class="msg">Online features are not connected yet. Paste your Firebase config into this file to switch them on.</p><button class="btn ghost" data-x>Close</button>`);return}
+if(U){show(`<h2>Account</h2><p>Signed in as <b>${esc(U.email)}</b></p><div class="act"><button class="btn del" data-so>Sign out</button><button class="btn ghost" data-x>Close</button></div>`);return}
+show(`<h2>Sign in</h2>${m?`<p class="msg">${m}</p>`:""}<input id="nm" type="email" placeholder="Email" autocomplete="email"><input id="pw2" type="password" placeholder="Password" autocomplete="current-password"><p class="msg" id="am"></p><div class="act"><button class="btn" data-si>Sign in</button><button class="btn ghost" data-su>Create account</button></div><p><button class="lnk" data-fp>Forgot password?</button></p><button class="btn ghost" data-x>Close</button>`)}
+const L=$("#list");
+L.addEventListener("pointerdown",e=>{
+const c=e.target.closest(".card");lp=false;clearTimeout(timer);if(!c)return;
+timer=setTimeout(()=>{lp=true;if(navigator.vibrate)navigator.vibrate(30);const h=S.habits.find(x=>x.id===c.dataset.h);if(h)info(h)},550)});
+["pointerup","pointercancel","pointerleave"].forEach(ev=>L.addEventListener(ev,()=>clearTimeout(timer)));
+L.addEventListener("contextmenu",e=>e.preventDefault());
+L.addEventListener("click",e=>{
+if(lp){lp=false;return}
+const b=e.target.closest("[data-d]");if(b){const h=S.habits.find(x=>x.id===b.dataset.id);let w="";if(DEMO&&h&&h.duo){const r=b.querySelector("span").getBoundingClientRect();if(e.clientX>r.left+r.width/2)w="p"}tog(b.dataset.id,b.dataset.d,w);return}
+const cc=e.target.closest("[data-code]");if(cc){showCode(cc.dataset.code);return}
+if(e.target.closest("[data-new]")){edit(null);return}
+const ed=e.target.closest("[data-edit]");if(ed)edit(ed.dataset.edit)});
+$("#add").onclick=()=>edit(null);
+$("#join").onclick=()=>{if(!DEMO&&!U){acct("Sign in first to join a room.");return}joinD()};
+$("#acc").onclick=acct;
+$("#modal").addEventListener("click",e=>{
+const t=e.target;
+if(t.closest("[data-x]")||(t.id==="modal"&&Date.now()-shownAt>400)){closeM();return}
+const md=t.closest("[data-mode]");if(md){if(md.dataset.mode==="d"&&!DEMO&&!U){acct("Sign in first to create a Duo habit, then tap + New again.");return}ED.duo=md.dataset.mode==="d";document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===md));$("#pw").hidden=ED.duo;return}
+const cp=t.closest("[data-copy]");if(cp){if(navigator.clipboard)navigator.clipboard.writeText(cp.dataset.copy).catch(()=>{});cp.textContent="Copied ✓";return}
+if(t.closest("[data-join]")){const jm=$("#jm");if(DEMO){jm.textContent="Online joining is not connected yet.";return}const code=($("#nm").value||"").trim().toUpperCase();if(code.length!==6){jm.textContent="The code has 6 characters.";return}jm.textContent="Please wait…";const ref=db.collection("rooms").doc(code);ref.get().then(r=>{if(!r.exists){jm.textContent="No room found with this code.";return}const m=r.data().members||[];if(m.includes(U.uid)){closeM();return}if(m.length>=2){jm.textContent="This room already has two people.";return}return ref.update({members:FV.arrayUnion(U.uid)}).then(()=>closeM())}).catch(()=>{jm.textContent="Could not join. Check the code and your connection."});return}
+if(t.closest("[data-si],[data-su]")){if(DEMO)return;const em=($("#nm").value||"").trim(),pw=$("#pw2").value,am=$("#am");am.textContent="Please wait…";(t.closest("[data-su]")?auth.createUserWithEmailAndPassword(em,pw):auth.signInWithEmailAndPassword(em,pw)).then(()=>closeM()).catch(x=>{am.textContent=aerr(x)});return}
+if(t.closest("[data-fp]")){const em=($("#nm").value||"").trim(),am=$("#am");if(!em){am.textContent="Type your email first.";return}auth.sendPasswordResetEmail(em).then(()=>{am.textContent="Reset link sent. Check your email."}).catch(x=>{am.textContent=aerr(x)});return}
+if(t.closest("[data-so]")){auth.signOut();closeM();return}
+const ic=t.closest("[data-ic]");
+if(ic){ED.icon=ic.dataset.ic;document.querySelectorAll(".i").forEach(x=>x.classList.toggle("on",x===ic));return}
+const cl=t.closest("[data-cl]");
+if(cl){ED.color=cl.dataset.cl;document.querySelectorAll(".cl button").forEach(x=>x.classList.toggle("on",x===cl));return}
+if(t.closest("[data-sv]")){
+const name=$("#nm").value.trim();if(!name){$("#nm").focus();return}
+if(!DEMO&&(ED.duo||String(ED.id||"").startsWith("r_"))){cloudSave(name);return}
+let nid=null;
+if(ED.id){const h=S.habits.find(x=>x.id===ED.id);if(h){h.name=name;h.icon=ED.icon;h.color=ED.color}}
+else if(S.habits.length<MAX){const pre=ED.duo?0:Math.max(0,Math.min(365,parseInt($("#pre").value,10)||0)),days={},nh=Date.now().toString(36);for(let i=1;i<=pre;i++)days[key(addD(today(),-i))]=1;const h={id:nh,name,icon:ED.icon,color:ED.color,created:key(addD(today(),-pre)),days};if(ED.duo){h.duo=1;h.code=genCode();h.pdays={};nid=nh}S.habits.push(h)}
+save();render();closeM();if(nid)showCode(nid);return}
+const d=t.closest("[data-del]");
+if(d){if(!d.dataset.c){d.dataset.c=1;d.textContent="Tap again to delete"}else{if(!DEMO&&String(ED.id).startsWith("r_")){leaveRoom(ED.id);return}S.habits=S.habits.filter(x=>x.id!==ED.id);save();render();closeM()}}
+});
+let U=null,db,auth,FV,unsub=null,R=[],prevFull={};
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),3200)};
+const aerr=e=>{const c=(e&&e.code)||"",m={"auth/invalid-credential":"Wrong email or password.","auth/wrong-password":"Wrong email or password.","auth/user-not-found":"Wrong email or password.","auth/invalid-email":"That email does not look right.","auth/email-already-in-use":"This email already has an account. Tap Sign in.","auth/weak-password":"Use a password with at least 6 characters.","auth/missing-password":"Enter your password.","auth/network-request-failed":"No internet connection.","auth/too-many-requests":"Too many tries. Wait a little and try again."};return m[c]||"Something went wrong ("+(c||"error")+")"};
+const cv=m=>{const x={};for(const k in m)x[k.slice(1,5)+"-"+k.slice(5,7)+"-"+k.slice(7,9)]=1;return x};
+const toHabit=d=>{const r=d.data(),ms=r.members||[],o=ms.find(x=>x!==U.uid);return{id:"r_"+d.id,duo:1,code:d.id,name:r.name,icon:r.icon,color:r.color,created:r.created,days:cv(r["t_"+U.uid]||{}),pdays:cv(o?(r["t_"+o]||{}):{}),pj:ms.length>1}};
+const merge=()=>{S.habits=S.habits.filter(h=>!h.duo).concat(R)};
+async function cloudTick(h,k){try{await db.collection("rooms").doc(h.code).update({["t_"+U.uid+".d"+k.replace(/-/g,"")]:h.days[k]?FV.delete():true})}catch(e){toast("Could not save. Check your connection.")}}
+async function cloudSave(name){
+try{
+if(ED.id){const h=S.habits.find(x=>x.id===ED.id);await db.collection("rooms").doc(h.code).update({name,icon:ED.icon,color:ED.color});closeM();return}
+if(S.habits.length>=MAX){toast("You can have up to "+MAX+" habits.");return}
+let code,ref;for(let i=0;i<5;i++){code=genCode();ref=db.collection("rooms").doc(code);if(!(await ref.get()).exists)break}
+await ref.set({name,icon:ED.icon,color:ED.color,created:key(today()),owner:U.uid,members:[U.uid]});
+closeM();showCode("r_"+code)
+}catch(e){toast(e&&e.code==="permission-denied"?"You are not allowed to do that here.":"Could not save. Check your connection.")}
+}
+async function leaveRoom(id){try{await db.collection("rooms").doc(id.slice(2)).update({members:FV.arrayRemove(U.uid)});closeM()}catch(e){toast("Could not leave. Check your connection.")}}
+function initFB(){
+if(DEMO)return;
+try{firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();FV=firebase.firestore.FieldValue}catch(e){toast("Firebase could not start. Check the config.");return}
+auth.onAuthStateChanged(u=>{U=u;if(unsub){unsub();unsub=null}prevFull={};R=[];merge();render();
+if(!u)return;
+unsub=db.collection("rooms").where("members","array-contains",u.uid).onSnapshot(sn=>{
+R=sn.docs.map(toHabit);let pend=null;const tk=key(today());
+R.forEach(h=>{const f=!!fd(h)[tk];if(prevFull[h.code]===false&&f){const n=streak(h);if(M[n])pend=[M[n],h,n]}prevFull[h.code]=f});
+merge();render();if(pend)pop(...pend)},()=>toast("Could not load your rooms."))})
+}
+initFB();
+render();
+</script>
+</body>
+</html>
