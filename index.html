@@ -87,6 +87,7 @@ body{margin:0;background:radial-gradient(900px 420px at 50% -80px,#3a1b73 0,tran
 .i.on{border-color:var(--ok);background:#35255c}
 .act{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .ghost{background:var(--chip);color:var(--tx)}
+.google{background:#fff;color:#202124;border:1px solid #dadce0;width:100%;margin-top:10px}.google:before{content:"G";font-weight:800;color:#4285f4;margin-right:10px;font-size:1.05rem}
 .del{background:#ef4444;color:#fff}
 .hb{display:flex;gap:8px}
 .hb .btn{padding:9px 13px}
@@ -206,8 +207,8 @@ function showCode(id){const h=S.habits.find(x=>x.id===id)||{code:String(id).repl
 function joinD(){show(`<h2>Join a Duo room</h2><p>Enter the code your partner shared.</p><input id="nm" maxlength="6" placeholder="K7M2QX" style="text-transform:uppercase;text-align:center;letter-spacing:.2em"><p class="msg" id="jm">${DEMO?"Online joining switches on after the Firebase setup. This screen shows how it will look.":""}</p><div class="act"><button class="btn" data-join>Join</button><button class="btn ghost" data-x>Cancel</button></div>`)}
 function acct(m){
 if(DEMO){show(`<h2>Account</h2><p class="msg">Online features are not connected yet. Paste your Firebase config into this file to switch them on.</p><button class="btn ghost" data-x>Close</button>`);return}
-if(U){show(`<h2>Account</h2><p>Signed in as <b>${esc(U.email)}</b></p><div class="act"><button class="btn del" data-so>Sign out</button><button class="btn ghost" data-x>Close</button></div>`);return}
-show(`<h2>Sign in</h2>${m?`<p class="msg">${m}</p>`:""}<input id="nm" type="email" placeholder="Email" autocomplete="email"><input id="pw2" type="password" placeholder="Password" autocomplete="current-password"><p class="msg" id="am"></p><div class="act"><button class="btn" data-si>Sign in</button><button class="btn ghost" data-su>Create account</button></div><p><button class="lnk" data-fp>Forgot password?</button></p><button class="btn ghost" data-x>Close</button>`)}
+if(U){show(`<h2>Account</h2><p>Signed in as <b>${esc(U.email)}</b></p><div class="act"><button class="btn google" data-google-link>Link Google account</button><button class="btn del" data-so>Sign out</button><button class="btn ghost" data-x>Close</button></div><p class="msg" id="gm">Link Google to this account to keep the same account and Duo data.</p>`);return}
+show(`<h2>Sign in</h2>${m?`<p class="msg">${m}</p>`:""}<input id="nm" type="email" placeholder="Email" autocomplete="email"><input id="pw2" type="password" placeholder="Password" autocomplete="current-password"><p class="msg" id="am"></p><div class="act"><button class="btn" data-si>Sign in</button><button class="btn ghost" data-su>Create account</button></div><button class="btn google" data-google>Continue with Google</button><p class="msg">If you already have an account with this email, sign in with your password first, then link Google from Account.</p><p><button class="lnk" data-fp>Forgot password?</button></p><button class="btn ghost" data-x>Close</button>`)}
 const L=$("#list");
 L.addEventListener("pointerdown",e=>{
 const c=e.target.closest(".card");lp=false;clearTimeout(timer);if(!c)return;
@@ -249,6 +250,17 @@ if(d){if(!d.dataset.c){d.dataset.c=1;d.textContent="Tap again to delete"}else{if
 let U=null,db,auth,FV,unsub=null,R=[],prevFull={};
 const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),3200)};
 const aerr=e=>{const c=(e&&e.code)||"",m={"auth/invalid-credential":"Wrong email or password.","auth/wrong-password":"Wrong email or password.","auth/user-not-found":"Wrong email or password.","auth/invalid-email":"That email does not look right.","auth/email-already-in-use":"This email already has an account. Tap Sign in.","auth/weak-password":"Use a password with at least 6 characters.","auth/missing-password":"Enter your password.","auth/network-request-failed":"No internet connection.","auth/too-many-requests":"Too many tries. Wait a little and try again."};return m[c]||"Something went wrong ("+(c||"error")+")"};
+const googleProvider=()=>new firebase.auth.GoogleAuthProvider();
+async function googleSignIn(){
+  const am=$("#am");
+  try{if(am)am.textContent="Opening Google sign-in…";await auth.signInWithPopup(googleProvider());closeM();}
+  catch(e){if(am)am.textContent=(e&&e.code==="auth/account-exists-with-different-credential")?"This email already has an account. Sign in with its email and password first, then open Account → Link Google account.":aerr(e);}
+}
+async function linkGoogle(){
+  const gm=$("#gm");
+  try{if(gm)gm.textContent="Connecting Google account…";await auth.currentUser.linkWithPopup(googleProvider());if(gm)gm.textContent="Google account linked successfully. Your existing account and Duo data are unchanged.";toast("Google account linked.");}
+  catch(e){if(gm)gm.textContent=(e&&e.code==="auth/provider-already-linked")?"A Google account is already linked.":(e&&e.code==="auth/credential-already-in-use")?"This Google account is already connected to another account.":"Could not link Google ("+((e&&e.code)||"error")+").";}
+}
 const cv=m=>{const x={};for(const k in m)x[k.slice(1,5)+"-"+k.slice(5,7)+"-"+k.slice(7,9)]=1;return x};
 const toHabit=d=>{const r=d.data(),ms=r.members||[],o=ms.find(x=>x!==U.uid);return{id:"r_"+d.id,duo:1,code:d.id,name:r.name,icon:r.icon,color:r.color,created:r.created,days:cv(r["t_"+U.uid]||{}),pdays:cv(o?(r["t_"+o]||{}):{}),pj:ms.length>1}};
 const merge=()=>{S.habits=S.habits.filter(h=>!h.duo).concat(R)};
