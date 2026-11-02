@@ -267,10 +267,20 @@ async function googleSignIn(){
   const am=$("#am");
   try{
     if(am)am.textContent="Opening Google sign-in…";
+    console.info("[Google diagnostic] Starting sign-in. Current user:",auth.currentUser?auth.currentUser.uid:"none");
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const result=await auth.signInWithPopup(googleProvider());
-    if(result&&result.user){closeM();toast("Signed in with Google successfully.");}
+    console.info("[Google diagnostic] Popup result:",{
+      email:result&&result.user?result.user.email:null,
+      uid:result&&result.user?result.user.uid:null,
+      isNewUser:result&&result.additionalUserInfo?result.additionalUserInfo.isNewUser:null,
+      currentUser:auth.currentUser?auth.currentUser.uid:null
+    });
+    if(result&&result.user){closeM();toast("Google signed in: "+(result.user.email||"account"));}
+    else if(am)am.textContent="Google window closed, but Firebase returned no user. Please try again.";
   }catch(e){
-    if(am)am.textContent=googleError(e);
+    console.error("[Google diagnostic] Sign-in failed:",e);
+    if(am)am.textContent=googleError(e)+" Details: "+((e&&e.message)||"No additional message")+". Code: "+((e&&e.code)||"none");
   }
 }
 async function linkGoogle(){
@@ -312,7 +322,7 @@ async function leaveRoom(id){try{await db.collection("rooms").doc(id.slice(2)).u
 function initFB(){
 if(DEMO)return;
 try{firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();FV=firebase.firestore.FieldValue}catch(e){toast("Firebase could not start. Check the config.");return}
-auth.onAuthStateChanged(u=>{U=u;if(unsub){unsub();unsub=null}prevFull={};R=[];merge();render();
+auth.onAuthStateChanged(u=>{console.info("[Auth diagnostic] Auth state:",u?{uid:u.uid,email:u.email,provider:u.providerData.map(p=>p.providerId)}:"signed out");U=u;if(unsub){unsub();unsub=null}prevFull={};R=[];merge();render();
 if(u)closeM();
 if(!u)return;
 unsub=db.collection("rooms").where("members","array-contains",u.uid).onSnapshot(sn=>{
