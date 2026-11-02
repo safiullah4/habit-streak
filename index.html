@@ -122,7 +122,14 @@ body{margin:0;background:radial-gradient(900px 420px at 50% -80px,#3a1b73 0,tran
 <script>
 const MAX=10,KEY="hs2",DEF="#34d399";
 /* ONLINE SETUP: after creating your Firebase project, replace the word null below with your config object, e.g. {apiKey:"...",authDomain:"...",projectId:"...",appId:"..."} */
-const FB=null;
+const FB={
+  apiKey: "AIzaSyAoAnFW1iY5z2N67alCOFG_anEHAK-DqGQ",
+  authDomain: "habit-streak-ad6d8.firebaseapp.com",
+  projectId: "habit-streak-ad6d8",
+  storageBucket: "habit-streak-ad6d8.firebasestorage.app",
+  messagingSenderId: "962536184721",
+  appId: "1:962536184721:web:ce61f08b5fed770fab5830"
+};
 const DEMO=!FB;
 const G={"Health":"💧 🥗 🍎 🥦 🥑 💊 😴 🦷 🧴 🚭 🚫 🍬 ☕ 🥤 🩺 🍵 🥛 🍳","Fitness":"🏃 🚶 🏋️ 🧘 🚴 🏊 ⚽ 🏀 🤸 🥊 🧗 🎾 🏓 🏸","Mind":"📖 📚 ✍️ 📝 🧠 🎓 🌍 🎧 💡 🧩 🔤 🗒️","Work":"💻 🎯 📅 📧 📞 🗂️ ⏰ 📈 🛠️ ✅ 🏆 🚀","Faith and calm":"🤲 🕌 📿 🌙 ⭐ 🌅 🌿 🌸 🙏 🕊️ 🕯️ 🌳","Home":"🧹 🧺 🛏️ 🪴 🚿 🧼 🛒 🐕 🐈 🚗 🔧 🗑️","Money and social":"💰 🏦 🪙 💳 👪 🤝 📱 🎁 ❤️ 😊 💌 🎉","Fun":"🎨 🎸 🎹 📷 🎮 🎬 ♟️ ✈️ 🏕️ 🎤 🎻 🧵"};
 const COLORS=["#34d399","#60a5fa","#f472b6","#fbbf24","#fb923c","#a78bfa","#2dd4bf","#f87171"];
