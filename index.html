@@ -266,8 +266,9 @@ function googleError(e){
 async function googleSignIn(){
   const am=$("#am");
   try{
-    if(am)am.textContent="Redirecting to Google…";
-    await auth.signInWithRedirect(googleProvider());
+    if(am)am.textContent="Opening Google sign-in…";
+    const result=await auth.signInWithPopup(googleProvider());
+    if(result&&result.user){closeM();toast("Signed in with Google successfully.");}
   }catch(e){
     if(am)am.textContent=googleError(e);
   }
@@ -276,8 +277,9 @@ async function linkGoogle(){
   const gm=$("#gm");
   try{
     if(!auth.currentUser){if(gm)gm.textContent="Please sign in first.";return}
-    if(gm)gm.textContent="Redirecting to Google to link your account…";
-    await auth.currentUser.linkWithRedirect(googleProvider());
+    if(gm)gm.textContent="Opening Google to link your account…";
+    const result=await auth.currentUser.linkWithPopup(googleProvider());
+    if(result&&result.user){closeM();toast("Google account connected successfully.");}
   }catch(e){
     if(gm)gm.textContent=googleError(e);
   }
