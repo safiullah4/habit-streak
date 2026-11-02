@@ -206,6 +206,7 @@ const genCode=()=>{const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i
 function showCode(id){const h=S.habits.find(x=>x.id===id)||{code:String(id).replace(/^r_/,"")};show(`<div class="em">👥</div><h2>Duo room created</h2><p>Share this code with your partner. They tap <b>Join</b> and enter it.</p><div class="code">${h.code}</div><button class="btn" data-copy="${h.code}">Copy code</button><p class="msg">${DEMO?"Demo mode: your partner is simulated. Tap the right half of a circle to act as your partner.":"The room is open for one more person."}</p><button class="btn ghost" data-x>Done</button>`,"g")}
 function joinD(){show(`<h2>Join a Duo room</h2><p>Enter the code your partner shared.</p><input id="nm" maxlength="6" placeholder="K7M2QX" style="text-transform:uppercase;text-align:center;letter-spacing:.2em"><p class="msg" id="jm">${DEMO?"Online joining switches on after the Firebase setup. This screen shows how it will look.":""}</p><div class="act"><button class="btn" data-join>Join</button><button class="btn ghost" data-x>Cancel</button></div>`)}
 function acct(m){
+if(m&&typeof m!=="string")m="";
 if(DEMO){show(`<h2>Account</h2><p class="msg">Online features are not connected yet. Paste your Firebase config into this file to switch them on.</p><button class="btn ghost" data-x>Close</button>`);return}
 if(U){show(`<h2>Account</h2><p>Signed in as <b>${esc(U.email)}</b></p><div class="act"><button class="btn google" data-google-link>Link Google account</button><button class="btn del" data-so>Sign out</button><button class="btn ghost" data-x>Close</button></div><p class="msg" id="gm">Link Google to this account to keep the same account and Duo data.</p>`);return}
 show(`<h2>Sign in</h2>${m?`<p class="msg">${m}</p>`:""}<input id="nm" type="email" placeholder="Email" autocomplete="email"><input id="pw2" type="password" placeholder="Password" autocomplete="current-password"><p class="msg" id="am"></p><div class="act"><button class="btn" data-si>Sign in</button><button class="btn ghost" data-su>Create account</button></div><button class="btn google" data-google>Continue with Google</button><p class="msg">If you already have an account with this email, sign in with your password first, then link Google from Account.</p><p><button class="lnk" data-fp>Forgot password?</button></p><button class="btn ghost" data-x>Close</button>`)}
@@ -226,6 +227,8 @@ $("#join").onclick=()=>{if(!DEMO&&!U){acct("Sign in first to join a room.");retu
 $("#acc").onclick=()=>acct();
 $("#modal").addEventListener("click",e=>{
 const t=e.target;
+if(t.closest("[data-google]")){googleSignIn();return}
+if(t.closest("[data-google-link]")){linkGoogle();return}
 if(t.closest("[data-x]")||(t.id==="modal"&&Date.now()-shownAt>400)){closeM();return}
 const md=t.closest("[data-mode]");if(md){if(md.dataset.mode==="d"&&!DEMO&&!U){acct("Sign in first to create a Duo habit, then tap + New again.");return}ED.duo=md.dataset.mode==="d";document.querySelectorAll(".seg button").forEach(x=>x.classList.toggle("on",x===md));$("#pw").hidden=ED.duo;return}
 const cp=t.closest("[data-copy]");if(cp){if(navigator.clipboard)navigator.clipboard.writeText(cp.dataset.copy).catch(()=>{});cp.textContent="Copied ✓";return}
