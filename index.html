@@ -311,6 +311,7 @@ function initFB(){
 if(DEMO)return;
 try{firebase.initializeApp(FB);auth=firebase.auth();db=firebase.firestore();FV=firebase.firestore.FieldValue}catch(e){toast("Firebase could not start. Check the config.");return}
 auth.onAuthStateChanged(u=>{U=u;if(unsub){unsub();unsub=null}prevFull={};R=[];merge();render();
+if(u)closeM();
 if(!u)return;
 unsub=db.collection("rooms").where("members","array-contains",u.uid).onSnapshot(sn=>{
 R=sn.docs.map(toHabit);let pend=null;const tk=key(today());
